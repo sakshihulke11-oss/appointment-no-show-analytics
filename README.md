@@ -90,37 +90,7 @@ Analysis supports:
 - Improved reminder workflows  
 - Resource prioritization aligned with attendance behavior  
 
----
 
-## 📷 Dashboard Preview
-
-Dashboard visuals demonstrating KPI trends and segmentation insights:
-
-Includes:
-
-- KPI summary view  
-- Attendance segmentation  
-- Neighborhood comparison  
-
----
-
-## 🧾 SQL Analysis
-
-All analytical queries are organized here:
-
-Includes KPI calculations and segmentation logic supporting dashboard metrics.
-
----
-
-## 🛠 Tools Used
-
-- Excel — data preparation  
-- SQL — analytical queries  
-- Power BI — visualization  
-
----
-
-## 📁 Repository Structure
 
 ## ✅ Project Outcome
 
