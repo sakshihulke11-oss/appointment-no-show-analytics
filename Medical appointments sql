@@ -1,0 +1,185 @@
+create table medical_appointments(
+patient_id text,
+appointment_id text,
+gender char(1),
+age int,
+neighborhood text,
+scholarship smallint,
+hypertension smallint,
+diabetes smallint,
+alcoholism smallint,
+handicap smallint,
+sms_received smallint,
+scheduled_day date,
+appointment_day date,
+no_show smallint
+);
+
+
+-- checking the data first
+select * from medical_appointments limit 10;
+
+
+-- basic overview
+select
+    count(*) as total_appointments,
+    count(distinct patient_id) as unique_patients,
+    count(distinct neighborhood) as total_neighbourhoods,
+    round(avg(age), 1) as avg_age
+from medical_appointments;
+
+
+-- checking for data issues
+select count(*) as negative_age_rows from medical_appointments where age < 0;
+
+select count(*) as invalid_dates from medical_appointments 
+where appointment_day < scheduled_day;
+
+
+-- overall no-show rate
+select
+    count(*) as total_appointments,
+    sum(no_show) as no_shows,
+    count(*) - sum(no_show) as showed_up,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments;
+
+
+-- does waiting longer mean more no-shows?
+select
+    case
+        when (appointment_day - scheduled_day) = 0 then 'Same Day'
+        when (appointment_day - scheduled_day) between 1 and 7 then '1-7 Days'
+        when (appointment_day - scheduled_day) between 8 and 15 then '8-15 Days'
+        when (appointment_day - scheduled_day) between 16 and 30 then '16-30 Days'
+        when (appointment_day - scheduled_day) between 31 and 60 then '31-60 Days'
+        else '60+ Days'
+    end as waiting_period,
+    count(*) as total,
+    sum(no_show) as no_shows,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments
+where (appointment_day - scheduled_day) >= 0
+group by waiting_period
+order by no_show_rate_pct desc;
+
+
+-- no show by age group
+select
+    case
+        when age between 0 and 12 then 'Child (0-12)'
+        when age between 13 and 17 then 'Teen (13-17)'
+        when age between 18 and 30 then 'Young Adult (18-30)'
+        when age between 31 and 45 then 'Adult (31-45)'
+        when age between 46 and 60 then 'Middle Age (46-60)'
+        when age > 60 then 'Senior (60+)'
+    end as age_group,
+    count(*) as total,
+    sum(no_show) as no_shows,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments
+where age >= 0
+group by age_group
+order by no_show_rate_pct desc;
+
+
+-- gender comparison
+select
+    gender,
+    count(*) as total,
+    sum(no_show) as no_shows,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments
+group by gender;
+
+
+-- did SMS reminders actually help?
+select
+    case sms_received when 1 then 'SMS Sent' else 'No SMS' end as sms_status,
+    count(*) as total,
+    sum(no_show) as no_shows,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments
+group by sms_received;
+
+
+-- no show rates for patients with chronic conditions
+select 'Hypertension' as condition_name,
+    count(*) as total,
+    sum(no_show) as no_shows,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments where hypertension = 1
+
+union all
+
+select 'Diabetes',
+    count(*),
+    sum(no_show),
+    round(100.0 * sum(no_show) / count(*), 2)
+from medical_appointments where diabetes = 1
+
+union all
+
+select 'Alcoholism',
+    count(*),
+    sum(no_show),
+    round(100.0 * sum(no_show) / count(*), 2)
+from medical_appointments where alcoholism = 1;
+
+
+-- top neighbourhoods with most no-shows
+-- only areas with 100+ appointments
+select
+    neighborhood,
+    count(*) as total_appointments,
+    sum(no_show) as no_shows,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments
+group by neighborhood
+having count(*) >= 100
+order by no_show_rate_pct desc
+limit 10;
+
+
+-- ranking neighbourhoods using window function
+select
+    neighborhood,
+    total_appointments,
+    no_shows,
+    no_show_rate_pct,
+    rank() over (order by no_show_rate_pct desc) as rank_by_noshow
+from (
+    select
+        neighborhood,
+        count(*) as total_appointments,
+        sum(no_show) as no_shows,
+        round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+    from medical_appointments
+    group by neighborhood
+    having count(*) >= 100
+) nb
+order by rank_by_noshow;
+
+
+-- which day of the week has most no-shows
+select
+    to_char(appointment_day, 'Day') as day_name,
+    count(*) as total,
+    sum(no_show) as no_shows,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments
+group by to_char(appointment_day, 'Day'), extract(dow from appointment_day)
+order by extract(dow from appointment_day);
+
+
+-- patients most likely to miss - no sms + long wait + no chronic condition
+select
+    count(*) as high_risk_total,
+    sum(no_show) as actually_missed,
+    round(100.0 * sum(no_show) / count(*), 2) as no_show_rate_pct
+from medical_appointments
+where sms_received = 0
+    and (appointment_day - scheduled_day) > 15
+    and hypertension = 0
+    and diabetes = 0;
+
