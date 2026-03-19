@@ -1,59 +1,52 @@
 # Healthcare Appointment No-Show Analysis
 
-This project analyzes why patients miss their scheduled healthcare appointments. The dataset has around 111,000 appointment records and I used it to find patterns in no-show behavior across different patient groups.
+## Overview
 
----
-
-## Why I did this project
-
-Missed appointments waste clinical resources and delay patient care. I wanted to understand which patients are most likely to not show up and whether things like SMS reminders or waiting time actually make a difference.
+Analyzed 111,000+ healthcare appointment records to find patterns behind patient no-shows. Worked across SQL, Python and Power BI to clean the data, run KPI analysis and build an interactive dashboard.
 
 ---
 
 ## Dataset
 
-- 111,000+ appointment records from Brazilian public health clinics
-- Includes patient age, gender, neighbourhood, chronic conditions, SMS reminder status and attendance outcome
+- **Source:** Kaggle — Medical Appointment No Shows
+- **Link:** https://www.kaggle.com/datasets/joniarroba/noshowappointments
+- **Size:** 111,000+ appointment records
+
+Columns used in analysis: `patient_id`, `appointment_id`, `gender`, `age`, `neighborhood`, `scholarship`, `hypertension`, `diabetes`, `alcoholism`, `handicap`, `sms_received`, `scheduled_day`, `appointment_day`, `no_show`
 
 ---
 
-## What I analyzed
+## What I did
 
-- Overall no-show rate
-- How waiting days between scheduling and appointment affect attendance
-- No-show patterns by age group and gender
-- Whether SMS reminders actually reduced no-shows
-- Attendance behavior in patients with chronic conditions like diabetes and hypertension
-- Neighbourhoods with the highest no-show rates
+- Cleaned the dataset — removed negative age rows, fixed date columns
+- Used SQL to calculate no-show KPIs, age group analysis, neighbourhood breakdown, SMS effectiveness and chronic condition analysis
+- Used Python (Pandas, Matplotlib) for EDA and visualizations
+- Built a Power BI dashboard with filters for age, gender and neighbourhood
 
 ---
 
-## Tools used
+## Dashboard KPIs
 
-- Excel - initial data cleaning and formatting
-- SQL - KPI queries, segmentation, window functions for neighbourhood ranking
-- Python - data cleaning, EDA, visualizations using Pandas and Matplotlib
-- Power BI - interactive dashboard tracking attendance KPIs
-
----
-
-## Key findings
-
-- About 20% of appointments result in a no-show
-- Longer waiting time between scheduling and appointment increases no-show probability
-- Interestingly patients who received SMS reminders had a higher no-show rate - likely because reminders are sent to high-risk patients more often
-- Young adults had the most unpredictable attendance patterns
-- Certain neighbourhoods consistently showed higher no-show rates
+| Metric | Value |
+|---|---|
+| Total Appointments | 111K+ |
+| Overall No-Show Rate | ~20% |
+| Average Waiting Days | 10.18 |
+| No-Show % with SMS | 27.6% |
 
 ---
 
-## Files in this repo
+## Key Findings
 
-- `medical appointments.sql` - SQL queries for all KPI and segmentation analysis
-- `appointments.py` - Python script for cleaning and exploring the data
-- `medical appointment data.xlsx` - dataset used for the project
-- `medical.appointments pbi.pbix` - Power BI dashboard file
+- Overall no-show rate was around **20%**
+- **Teen** and **Young Adult** age groups had the highest no-show rates
+- Longer waiting days between scheduling and appointment increased no-show probability
+- SMS reminders alone did not reduce no-shows significantly
+- Patients with chronic conditions showed slightly better attendance
 
+---
 
-
-
+## Files
+├── medical.appointments.sql     — SQL queries
+├── appointments.py              — Python EDA script
+├── medical.appointments pbi.pbix — Power BI dashboard
