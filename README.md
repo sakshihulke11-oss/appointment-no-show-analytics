@@ -1,108 +1,58 @@
-# 🏥 Healthcare Appointment No-Show Analysis
+# Healthcare Appointment No-Show Analysis
 
-
-## 📌 Project Overview
-
-Missed healthcare appointments reduce operational efficiency, delay patient care, and increase scheduling uncertainty. This project analyzes appointment attendance behavior to identify no-show patterns and convert raw healthcare data into actionable operational insights.
-
-The objective is to demonstrate a structured analytics workflow — from data preparation to KPI analysis and dashboard storytelling — focused on decision-driven outcomes.
-
-
-## 📊 Dataset
-
-This project uses approximately **111,000 healthcare appointment records**, representing real-world scheduling and attendance behavior.
-
-Dataset includes:
-
-- Patient & appointment identifiers  
-- Scheduled vs appointment timing  
-- Age & neighborhood information  
-- Chronic condition indicators  
-  (hypertension, diabetes, alcoholism, handicap)  
-- SMS reminder status  
-- Attendance outcome (no-show flag)  
-
+This project analyzes why patients miss their scheduled healthcare appointments. The dataset has around 111,000 appointment records and I used it to find patterns in no-show behavior across different patient groups.
 
 ---
 
-## 🎯 Problem Statement
+## Why I did this project
 
-Healthcare providers face unpredictable appointment attendance, leading to wasted resources and delayed service delivery.
-
-This analysis investigates:
-
-- High-risk patient segments  
-- Chronic vs non-chronic attendance patterns  
-- Neighborhood-level trends  
-- Reminder effectiveness  
-- Operational strategies to reduce missed visits  
+Missed appointments waste clinical resources and delay patient care. I wanted to understand which patients are most likely to not show up and whether things like SMS reminders or waiting time actually make a difference.
 
 ---
 
-## 🔄 Analytical Workflow
+## Dataset
 
-**Data Cleaning → SQL KPI Analysis → Segmentation → Dashboard Visualization → Decision Insights**
-
-### 📂 Excel
-- Data cleaning & formatting  
-- Preparation for analysis  
-
-### 🗄 SQL
-- KPI calculations  
-- Patient segmentation  
-- Neighborhood analysis  
-
-### 📈 Power BI
-- Interactive dashboard  
-- KPI storytelling  
-- Attendance visualization  
+- 111,000+ appointment records from Brazilian public health clinics
+- Includes patient age, gender, neighbourhood, chronic conditions, SMS reminder status and attendance outcome
 
 ---
 
-## 📌 Key KPIs Analyzed
+## What I analyzed
 
-- Total appointments  
-- Overall no-show rate  
-- Average waiting days  
-- Neighborhood no-show comparison  
-- Chronic vs non-chronic attendance  
-- Age group behavior  
-- SMS reminder effectiveness  
-
----
-
-## 🔍 Key Findings
-
-- ~20% of appointments result in no-shows  
-- Pediatric chronic patients show elevated absence patterns  
-- Young adults demonstrate attendance variability  
-- Neighborhood trends reveal localized risk  
-- Reminder messages alone do not eliminate missed visits  
+- Overall no-show rate
+- How waiting days between scheduling and appointment affect attendance
+- No-show patterns by age group and gender
+- Whether SMS reminders actually reduced no-shows
+- Attendance behavior in patients with chronic conditions like diabetes and hypertension
+- Neighbourhoods with the highest no-show rates
 
 ---
 
-## 🧠 Decision Insights
+## Tools used
 
-Analysis supports:
-
-- Targeted follow-ups in high-risk neighborhoods  
-- Risk-based scheduling adjustments  
-- Improved reminder workflows  
-- Resource prioritization aligned with attendance behavior  
-
-
-
-## ✅ Project Outcome
-
-This project demonstrates how healthcare operational data can be transformed into actionable insights that support smarter scheduling decisions, improved efficiency, and data-driven patient engagement.
+- Excel - initial data cleaning and formatting
+- SQL - KPI queries, segmentation, window functions for neighbourhood ranking
+- Python - data cleaning, EDA, visualizations using Pandas and Matplotlib
+- Power BI - interactive dashboard tracking attendance KPIs
 
 ---
 
-## 👩‍💻 Author
+## Key findings
 
-Healthcare analytics portfolio project showcasing structured data cleaning, KPI analysis, and dashboard-driven decision support.
+- About 20% of appointments result in a no-show
+- Longer waiting time between scheduling and appointment increases no-show probability
+- Interestingly patients who received SMS reminders had a higher no-show rate - likely because reminders are sent to high-risk patients more often
+- Young adults had the most unpredictable attendance patterns
+- Certain neighbourhoods consistently showed higher no-show rates
 
+---
 
+## Files in this repo
+
+- `medical appointments.sql` - SQL queries for all KPI and segmentation analysis
+- `appointments.py` - Python script for cleaning and exploring the data
+- `medical appointment data.xlsx` - dataset used for the project
+- `medical.appointments pbi.pbix` - Power BI dashboard file
 
 
 
