@@ -6,53 +6,46 @@ df = pd.read_csv("appointments_data.csv")
 print(df.shape)
 print(df.head())
 print(df.columns.tolist())
-print(df.head())
-
-# columns are already clean in this dataset
-print(df.columns.tolist())
-
-# removing negative age rows
-print("negative age rows:", (df['age'] < 0).sum())
-df = df[df['age'] >= 0]
-
-# 1 = no show, 0 = showed up
-print(df['no_show'].unique())
-df['no_show_flag'] = df['no_show']
-
-df['scheduled_day']    = pd.to_datetime(df['scheduled_day'])
-df['appointment_day']  = pd.to_datetime(df['appointment_day'])
-
-df['scheduled_day']   = pd.to_datetime(df['scheduled_day'])
-df['appointment_day'] = pd.to_datetime(df['appointment_day'])
 
 # removing negative age rows - data entry error
 print("negative age rows:", (df['age'] < 0).sum())
 df = df[df['age'] >= 0]
 
 # 1 = no show, 0 = showed up
+# NOTE: this assumes no_show is already coded 0/1 in the source CSV.
+# The raw Kaggle file uses "Yes"/"No" strings in a "No-show" column --
+# if you ever load the raw file directly, recode first:
+#   df['no_show_flag'] = df['No-show'].apply(lambda x: 1 if x == 'Yes' else 0)
+print(df['no_show'].unique())
 df['no_show_flag'] = df['no_show']
 
-total    = len(df)
-no_shows = df['no_show_flag'].sum()
-rate     = round(no_shows / total * 100, 2)
+df['scheduled_day'] = pd.to_datetime(df['scheduled_day'])
+df['appointment_day'] = pd.to_datetime(df['appointment_day'])
 
+total = len(df)
+no_shows = df['no_show_flag'].sum()
+rate = round(no_shows / total * 100, 2)
 print(f"Total Appointments: {total}")
-print(f"No Shows          : {no_shows}")
-print(f"No Show Rate      : {rate}%")
+print(f"No Shows : {no_shows}")
+print(f"No Show Rate : {rate}%")
 
 # -----------------------------------------------
 # Waiting Days Analysis
 # days between scheduling and actual appointment
 # -----------------------------------------------
-
 df['waiting_days'] = (df['appointment_day'] - df['scheduled_day']).dt.days
 df = df[df['waiting_days'] >= 0]
-
 print(f"\nAverage Waiting Days: {round(df['waiting_days'].mean(), 2)}")
 
+# FIX: pd.cut() uses (a,b] intervals by default. The original bins
+# [0,1,7,15,30,60,200] excluded waiting_days == 0 entirely (fell into NaN,
+# no bucket) AND put waiting_days == 1 into "Same Day" instead of "1-7 days".
+# Bins below start at -1 so day 0 lands correctly in "Same Day" and day 1
+# lands in "1-7 days" -- this now matches the SQL file's bucketing exactly
+# (SQL: "= 0" -> Same Day, "between 1 and 7" -> 1-7 Days, etc.)
 df['wait_group'] = pd.cut(
     df['waiting_days'],
-    bins=[0, 1, 7, 15, 30, 60, 200],
+    bins=[-1, 0, 7, 15, 30, 60, 200],
     labels=['Same Day', '1-7 days', '8-15 days', '16-30 days', '31-60 days', '60+ days']
 )
 
@@ -69,11 +62,11 @@ print(wait_summary)
 # -----------------------------------------------
 # Age Group Analysis
 # -----------------------------------------------
-
 df['age_group'] = pd.cut(
     df['age'],
     bins=[0, 12, 17, 30, 45, 60, 100],
-    labels=['Child', 'Teen', 'Young Adult', 'Adult', 'Middle Age', 'Senior']
+    labels=['Child', 'Teen', 'Young Adult', 'Adult', 'Middle Age', 'Senior'],
+    include_lowest=True
 )
 
 age_summary = df.groupby('age_group', observed=False)['no_show_flag'].agg(
@@ -89,7 +82,6 @@ print(age_summary.sort_values('no_show_rate_%', ascending=False))
 # -----------------------------------------------
 # Gender Analysis
 # -----------------------------------------------
-
 gender_summary = df.groupby('gender')['no_show_flag'].agg(
     total='count',
     no_shows='sum'
@@ -103,7 +95,6 @@ print(gender_summary)
 # -----------------------------------------------
 # SMS Reminder Effectiveness
 # -----------------------------------------------
-
 sms_summary = df.groupby('sms_received')['no_show_flag'].agg(
     total='count',
     no_shows='sum'
@@ -118,19 +109,16 @@ print(sms_summary)
 # -----------------------------------------------
 # Chronic Conditions Analysis
 # -----------------------------------------------
-
 for condition in ['hypertension', 'diabetes', 'alcoholism']:
     condition_rate = round(
         df[df[condition] == 1]['no_show_flag'].mean() * 100, 2
     )
     print(f"{condition} patients no show rate: {condition_rate}%")
 
-
 # -----------------------------------------------
 # Neighborhood Analysis
 # only areas with 100+ appointments to avoid small sample bias
 # -----------------------------------------------
-
 nb_summary = df.groupby('neighborhood')['no_show_flag'].agg(
     total='count',
     no_shows='sum'
@@ -145,7 +133,6 @@ print(nb_summary.sort_values('no_show_rate_%', ascending=False).head(10))
 # -----------------------------------------------
 # Visualizations
 # -----------------------------------------------
-
 # no show rate by age group
 plt.figure(figsize=(10, 5))
 plot_data = age_summary.sort_values('no_show_rate_%')
@@ -176,4 +163,3 @@ plt.savefig('noshow_sms_impact.png')
 plt.show()
 
 print("\ndone")
-
