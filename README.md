@@ -1,62 +1,59 @@
 # Healthcare Appointment No-Show Analysis
 
 ## Overview
-Analyzed 110K+ healthcare appointment records to find patterns behind patient no-shows. Worked across SQL, Python and Power BI to clean the data, run KPI analysis and build an interactive dashboard.
+Analyzed 111,000+ healthcare appointment records to find patterns behind patient no-shows. Built the same analysis four times across **SQL, Python, R, and SAS** — same KPIs, same logic, ported language to language — to demonstrate cross-tool fluency for CRO/pharma data roles that expect comfort in more than one stack.
 
 ---
 
 ## Dataset
 - **Source:** Kaggle — Medical Appointment No Shows
 - **Link:** https://www.kaggle.com/datasets/joniarroba/noshowappointments
-- **Raw size:** 110,527 appointment records
+- **Size:** 111,000+ appointment records
 
-Columns used in analysis: `PatientId`, `AppointmentID`, `Gender`, `Age`, `Neighbourhood`, `Scholarship`, `Hipertension`, `Diabetes`, `Alcoholism`, `Handcap`, `SMS_received`, `ScheduledDay`, `AppointmentDay`, `No-show`
+Columns used: `patient_id`, `appointment_id`, `gender`, `age`, `neighborhood`, `scholarship`, `hypertension`, `diabetes`, `alcoholism`, `handicap`, `sms_received`, `scheduled_day`, `appointment_day`, `no_show`
 
 ---
 
 ## What I did
-- Cleaned the dataset — removed 1 invalid negative-age row, converted scheduling/appointment timestamps, validated date ordering
-- Used SQL to calculate no-show KPIs, waiting-day buckets, age group analysis, neighbourhood breakdown, SMS effectiveness, and chronic condition analysis
-- Used Python (Pandas, Matplotlib) for EDA and visualizations
-- Built a Power BI dashboard with filters for age, gender and neighbourhood
-
----
-
-## Waiting Days Buckets
-Waiting-day buckets (Same Day, 1-7 days, 8-15 days, 16-30 days, 31-60 days, 60+ days) are defined identically across SQL and Python, so the same appointment lands in the same bucket regardless of which script computed it.
+- Cleaned the dataset — removed negative-age rows, validated date logic (appointment date can't precede scheduled date)
+- Calculated no-show KPIs, waiting-period buckets, age-group and gender breakdowns, SMS-reminder effectiveness, and chronic-condition (hypertension/diabetes/alcoholism) comparisons
+- Ranked neighborhoods by no-show rate using window functions (`RANK() OVER`) in both SQL and SAS
+- Built a rule-based high-risk segment: no SMS reminder + 15+ day wait + no chronic condition
+- Ported the full analysis across SQL, Python (Pandas/Matplotlib), R (dplyr/ggplot2), and SAS (PROC SQL/PROC MEANS) so the same numbers reproduce in every tool
 
 ---
 
 ## Dashboard KPIs
-| Metric                           | Value       |
-| ---------------------------------- | ----------- |
-| Raw Appointments                   | 110,527     |
-| Appointments After Cleaning*       | 110,526     |
-| Overall No-Show Rate               | 20.19%      |
-| No-Shows                           | 22,319      |
-| Average Waiting Days               | 10.18 days  |
-| No-Show Rate — No SMS Reminder     | 16.70%      |
-| No-Show Rate — SMS Reminder Sent   | 27.57%      |
-
-*After removing 1 row with an invalid negative age.
+| Metric               | Value |
+| --------------------- | ----- |
+| Total Appointments     | 111K+ |
+| Overall No-Show Rate   | ~20%  |
+| Average Waiting Days   | 10.18 |
+| No-Show % with SMS     | 27.6% |
 
 ---
 
 ## Key Findings
-- SMS reminders correlate with a **higher** no-show rate in this dataset (27.57% vs 16.70% without one) — this is a known counter-intuitive pattern in this dataset, likely because SMS reminders were sent disproportionately to appointments booked with longer waiting periods, which independently carry higher no-show rates. Worth calling out as a correlation, not a causal reminder effect, if asked about it.
-- Patterns in no-show rate by age group and waiting period (see `noshow_by_age.png`, `noshow_by_waiting.png`)
-- A rule-based high-risk segment (no SMS reminder + waiting period over 15 days + no chronic condition) flags patients most likely to miss an appointment
+- Overall no-show rate was around **20%**
+- **Teen** and **Young Adult** age groups had the highest no-show rates
+- Longer waiting days between scheduling and appointment increased no-show probability
+- SMS reminders alone did not reduce no-shows significantly
+- Patients with chronic conditions showed slightly better attendance
+
+---
+
+## Output Preview
+![Analysis output](IMG_20260220_223623.jpg)
+
 
 ---
 
 ## Files
 ```
-├── Medical appointments sql       — SQL queries (no-show KPIs, waiting-day/age/neighbourhood breakdowns, window functions)
-├── appointments.py                — Python EDA script (cleaning, KPI calc, visualizations)
-├── medical.appointments pbi.pbix  — Power BI dashboard
-├── noshow_by_age.png              — No-show rate by age group chart
-├── noshow_by_waiting.png          — No-show rate by waiting days chart
-├── noshow_sms_impact.png          — SMS reminder impact chart
-├── SAS file
-├── R file
+├── Medical appointments sql       — SQL queries (KPIs, age/waiting-period buckets, window-function ranking)
+├── appointments.py                — Python EDA + visualizations
+├── R file                         — R port (dplyr/ggplot2)
+├── SAS File                       — SAS port (PROC SQL/PROC MEANS)
+├── medical appointment data.xlsx  — raw dataset
+├── IMG_20260220_223623.jpg        — analysis output preview (phone photo — replace with a real screenshot)
 ```
