@@ -19,7 +19,7 @@ Columns used: `patient_id`, `appointment_id`, `gender`, `age`, `neighborhood`, `
 - Calculated no-show KPIs, waiting-period buckets, age-group and gender breakdowns, SMS-reminder effectiveness, and chronic-condition (hypertension/diabetes/alcoholism) comparisons
 - Ranked neighborhoods by no-show rate using window functions (`RANK() OVER`) in both SQL and SAS
 - Built a rule-based high-risk segment: no SMS reminder + 15+ day wait + no chronic condition
-- Ported the full analysis across SQL, Python (Pandas/Matplotlib), R (dplyr/ggplot2), and SAS (PROC SQL/PROC MEANS) so the same numbers reproduce in every tool
+- Ported the full analysis across SQL, Python (Pandas/Matplotlib),  and SAS (PROC SQL/PROC MEANS) so the same numbers reproduce in every tool
 
 ---
 
@@ -52,7 +52,6 @@ Columns used: `patient_id`, `appointment_id`, `gender`, `age`, `neighborhood`, `
 ```
 ├── Medical appointments sql       — SQL queries (KPIs, age/waiting-period buckets, window-function ranking)
 ├── appointments.py                — Python EDA + visualizations
-├── R file                         — R port (dplyr/ggplot2)
 ├── SAS File                       — SAS port (PROC SQL/PROC MEANS)
 ├── medical appointment data.xlsx  — raw dataset
 ├── IMG_20260220_223623.jpg        — analysis output preview (phone photo — replace with a real screenshot)
