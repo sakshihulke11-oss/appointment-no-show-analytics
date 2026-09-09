@@ -11,11 +11,7 @@ print(df.columns.tolist())
 print("negative age rows:", (df['age'] < 0).sum())
 df = df[df['age'] >= 0]
 
-# 1 = no show, 0 = showed up
-# NOTE: this assumes no_show is already coded 0/1 in the source CSV.
-# The raw Kaggle file uses "Yes"/"No" strings in a "No-show" column --
-# if you ever load the raw file directly, recode first:
-#   df['no_show_flag'] = df['No-show'].apply(lambda x: 1 if x == 'Yes' else 0)
+
 print(df['no_show'].unique())
 df['no_show_flag'] = df['no_show']
 
